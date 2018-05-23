@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--添加FragmentTabHost控件-->
+<android.support.v4.app.FragmentTabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/tabhost"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!--添加选项卡控件-->
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"></TabWidget>
+        <!--添加选项卡对应的选项页面-->
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@android:id/tabs">
+        </FrameLayout>
+    </RelativeLayout>
+</android.support.v4.app.FragmentTabHost>

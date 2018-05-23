@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.lenovo.viewpagerdemo.activities.HomeActivity">
+
+    <!--顶部搜索框部分-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/imgbtn_chcity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:src="@mipmap/tb5" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:layout_marginTop="10dp"
+            android:src="@mipmap/search5" />
+
+        <ImageButton
+            android:id="@+id/imgbtn_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:src="@mipmap/tb6"
+            />
+
+    </LinearLayout>
+
+    <!--轮播图-->
+    <LinearLayout
+        android:id="@+id/carousel_pic"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
+        <!--android:layout_marginBottom="250dp"-->
+        <FrameLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="150dp">
+            <!--轮播图位置-->
+            <!--右下角小圆点-->
+            <LinearLayout
+                android:layout_marginRight="5dp"
+                android:layout_gravity="bottom|right"
+                android:id="@+id/live_indicator"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/live_view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </FrameLayout>
+    </LinearLayout>
+
+    <!--两张图片按钮-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/imgbtn_food"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:src="@mipmap/food" />
+
+        <ImageButton
+            android:id="@+id/imgbtn_entertain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:src="@mipmap/entertainment" />
+    </LinearLayout>
+    <ListView
+        android:id="@+id/lv_shops"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></ListView>
+</LinearLayout>

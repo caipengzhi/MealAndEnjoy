@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/ho">
+
+    <TextView
+        android:id="@+id/blank6"
+        android:layout_alignParentEnd="true"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:text="       ">
+    </TextView>
+
+    <TextView
+        android:id="@+id/blank7"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/seb"
+        android:text="       "></TextView>
+
+    <ImageButton
+        android:id="@+id/tox"
+        android:layout_below="@id/blank7"
+        android:layout_centerInParent="true"
+        android:layout_width="80dip"
+        android:layout_height="80dip"
+        android:background="@mipmap/txia">
+    </ImageButton>
+
+    <TextView
+        android:id="@+id/blank8"
+        android:layout_below="@id/tox"
+        android:layout_alignParentStart="true"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:text="       ">
+    </TextView>
+
+    <ImageButton
+        android:id="@+id/seb"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_below="@id/blank6"
+        android:layout_toStartOf="@id/blank6"></ImageButton>
+
+    <Button
+        android:id="@+id/bt_1"
+        android:layout_below="@id/blank8"
+        android:layout_toEndOf="@id/blank8"
+        android:layout_width="80dip"
+        android:layout_height="30dip"
+        android:text="登录"
+        android:background="#c8ddc9"
+        android:textColor="#000000">
+    </Button>
+
+    <TextView
+        android:id="@+id/blank9"
+        android:layout_below="@id/tox"
+        android:layout_alignParentEnd="true"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:text="       ">
+    </TextView>
+
+    <Button
+        android:id="@+id/bt_2"
+        android:layout_below="@id/blank9"
+        android:layout_toStartOf="@id/blank9"
+        android:layout_width="80dip"
+        android:layout_height="30dip"
+        android:text="注册"
+        android:background="#c8ddc9"
+        android:textColor="#000000">
+    </Button>
+
+    <TextView
+        android:id="@+id/blank10"
+        android:layout_below="@id/bt_1"
+        android:layout_width="fill_parent"
+        android:layout_height="16dp"
+        android:background="#ffffff">
+    </TextView>
+
+    <!--粗横线blank11-->
+    <TextView
+        android:id="@+id/blank11"
+        android:layout_below="@id/blank10"
+        android:layout_width="fill_parent"
+        android:layout_height="10dp"
+        android:background="#f3eded">
+    </TextView>
+    <!--粗横线结束-->
+
+    <ImageButton
+        android:id="@+id/bt_3"
+        android:layout_below="@id/blank11"
+        android:layout_alignParentStart="true"
+        android:layout_width="130dp"
+        android:layout_height="90dp"
+        android:background="@mipmap/shouc">
+    </ImageButton>
+
+    <!--下面这两段是中间细的竖线-->
+    <TextView
+        android:id="@+id/blank12"
+        android:layout_toEndOf="@id/bt_3"
+        android:layout_alignTop="@id/bt_3"
+        android:layout_width="16dp"
+        android:layout_height="10dp"
+        android:background="#ffffff">
+    </TextView>
+
+    <ImageView
+        android:id="@+id/tc_1"
+        android:layout_toEndOf="@id/bt_3"
+        android:layout_below="@id/blank12"
+        android:layout_width="3dp"
+        android:layout_height="70dp"
+        android:background="#f3eded">
+    </ImageView>
+    <!--到这里-->
+
+    <!--这是卡券按钮-->
+    <ImageButton
+        android:id="@+id/bt_4"
+        android:layout_below="@id/blank11"
+        android:layout_toEndOf="@id/tc_1"
+        android:layout_width="130dp"
+        android:layout_height="90dp"
+        android:background="@mipmap/kqua">
+    </ImageButton>
+    <!--卡券结束-->
+
+    <!--下面这两段是中间细的竖线2-->
+    <TextView
+        android:id="@+id/blank13"
+        android:layout_toEndOf="@id/bt_4"
+        android:layout_alignTop="@id/bt_4"
+        android:layout_width="16dp"
+        android:layout_height="10dp"
+        android:background="#ffffff">
+    </TextView>
+
+    <ImageView
+        android:id="@+id/tc_2"
+        android:layout_toEndOf="@id/bt_4"
+        android:layout_below="@id/blank13"
+        android:layout_width="3dp"
+        android:layout_height="70dp"
+        android:background="#f3eded">
+    </ImageView>
+    <!--到这里-->
+
+    <!--这是我的评价按钮-->
+    <ImageButton
+        android:id="@+id/bt_5"
+        android:layout_below="@id/blank11"
+        android:layout_toEndOf="@id/tc_2"
+        android:layout_width="130dp"
+        android:layout_height="90dp"
+        android:background="@mipmap/wdpj">
+    </ImageButton>
+    <!--评价结束-->
+
+    <!--粗横线tc_3-->
+    <TextView
+        android:id="@+id/tc_3"
+        android:layout_below="@id/bt_5"
+        android:layout_width="fill_parent"
+        android:layout_height="10dp"
+        android:background="#f3eded">
+    </TextView>
+    <!--粗横线结束-->
+
+    <!--分享APP横按钮-->
+    <Button
+        android:id="@+id/bt_6"
+        android:layout_below="@id/tc_3"
+        android:layout_width="396dip"
+        android:layout_height="34dp"
+        android:background="#ffffff"
+        android:text="分享APP>" />
+    <!--分享结束-->
+
+    <!--细横线tc_4-->
+    <TextView
+        android:id="@+id/tc_4"
+        android:layout_below="@id/bt_6"
+        android:layout_width="fill_parent"
+        android:layout_height="4dp"
+        android:background="#f3eded">
+    </TextView>
+    <!--细横线结束-->
+
+    <!--联系我们横按钮-->
+    <Button
+        android:id="@+id/bt_7"
+        android:layout_width="396dip"
+        android:layout_height="34dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tc_4"
+        android:background="#ffffff"
+        android:text="联系我们>"/>
+    <!--我们结束-->
+
+    <!--细横线tc_5-->
+    <TextView
+        android:id="@+id/tc_5"
+        android:layout_below="@id/bt_7"
+        android:layout_width="fill_parent"
+        android:layout_height="4dp"
+        android:background="#f3eded">
+    </TextView>
+    <!--细横线结束-->
+
+
+
+
+
+</RelativeLayout>
+
