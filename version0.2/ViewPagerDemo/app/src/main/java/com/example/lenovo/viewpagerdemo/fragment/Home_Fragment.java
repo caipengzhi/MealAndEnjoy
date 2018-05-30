@@ -1,12 +1,15 @@
 package com.example.lenovo.viewpagerdemo.fragment;
 
+
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,16 +17,33 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
+import com.example.lenovo.viewpagerdemo.HomeShopList;
 import com.example.lenovo.viewpagerdemo.R;
 import com.example.lenovo.viewpagerdemo.activities.DeliciousFoodActivity;
 import com.example.lenovo.viewpagerdemo.activities.EntertainmentActivity;
 import com.example.lenovo.viewpagerdemo.activities.HomeActivity;
+import com.example.lenovo.viewpagerdemo.adapters.CustomHomeAdapter;
 import com.example.lenovo.viewpagerdemo.adapters.MyPagerAdapter;
+import com.example.lenovo.viewpagerdemo.entity.ShopDemo;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by lenovo on 2018/5/23.
@@ -47,6 +67,16 @@ public class Home_Fragment extends Fragment implements ViewPager.OnPageChangeLis
     //-----以上为轮播图所用------------
     private ImageButton imgbtn_food;
     private ImageButton imgbtn_entertain;
+
+    //主线程新建handler获得子线程服务器请求数据更新UI
+    private int[] a = {R.drawable.demo01,R.drawable.demo02,R.drawable.demo03,R.drawable.demo04,R.drawable.demo05};
+    private ListView listView;
+    private OkHttpClient ok;
+    private Thread thread;
+    private ArrayList<String> s;
+    private Bitmap bitmap;
+    private ImageView demo;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -83,6 +113,15 @@ public class Home_Fragment extends Fragment implements ViewPager.OnPageChangeLis
         mAdapter.notifyDataSetChanged();
         //设置底部4个小点
         setBottomIndicator();
+        //添加listview
+        demo = getActivity().findViewById(R.id.demo);
+        ok = new OkHttpClient();
+        thread = new Thread(new MyThread());
+        listView = getActivity().findViewById(R.id.lv_shops);
+        thread.start();
+
+
+
     }
 
     private void addImageView(){
@@ -149,6 +188,43 @@ public class Home_Fragment extends Fragment implements ViewPager.OnPageChangeLis
             }
         };
         mThread.start();
+
+//        thread = new Thread(){
+//            @Override
+//        public void run(){
+//            String str = "首页list请求";
+//            MediaType type = MediaType.parse("text/plain;charset=UTF-8");
+//            RequestBody body = RequestBody.create(type,str);
+//            Request.Builder builder = new Request.Builder();
+//
+//            builder.url("http://172.16.23.47:8080/demo001/ShopDemo/homelist.action");
+//            builder.post(body);
+//            Request request = builder.build();
+//            Call call = ok.newCall(request);
+//
+//            try {
+//                Response response = call.execute();
+//                Log.i("demo",response.body().string());
+//                String jshoplist = response.body().string();
+//                Gson gson = new Gson();
+//                List<ShopDemo> shoplist = gson.fromJson(jshoplist,new TypeToken<List<ShopDemo>>(){}.getType());
+//                Message msg = Message.obtain();
+//                Bundle b = new Bundle();
+//                for(int i = 0;i<shoplist.size();i++){
+//                    String n = String.valueOf(i);
+//                    b.putString(n,shoplist.get(i).getShopdName());
+//
+//                }
+//                msg.setData(b);
+//                msg.what = 1;
+//                mHandler.sendMessage(msg);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            mHandler.removeCallbacks(thread);
+//        }
+//        };
+//        thread.start();
     }
 
 
@@ -223,6 +299,31 @@ public class Home_Fragment extends Fragment implements ViewPager.OnPageChangeLis
                     }
 
                     break;
+                case 1:
+                    final Home_Fragment activity1 = mWeakReference.get();
+                    Log.i("ceshi","success");
+                    activity1.s = new ArrayList<>();
+                    Bundle b = msg.getData();
+                    Set<String> keySet = b.keySet();
+                    Gson gson = new Gson();
+                    for(String key:keySet){
+                        ShopDemo shopDemo = gson.fromJson((String)b.get(key),ShopDemo.class);
+                        activity1.s.add(shopDemo.getShopdName());
+                        activity1.s.add(shopDemo.getShopimg());
+                    }
+                    Log.i("ceshi",activity1.s.toString());
+                    activity1.listView = activity1.getActivity().findViewById(R.id.lv_shops);
+                    CustomHomeAdapter customHomeAdapter = new CustomHomeAdapter(activity1.getContext(),R.layout.main_list_item,activity1.prepaerDate(activity1.s));
+
+                    activity1.listView.setAdapter(customHomeAdapter);
+                    ViewGroup.LayoutParams params = activity1.listView.getLayoutParams();
+                    ListAdapter listAdapter = activity1.listView.getAdapter();
+                    View listitem = listAdapter.getView(0,null,activity1.listView);
+                    listitem.measure(0,0);
+
+                    params.height = listAdapter.getCount() * listitem.getMeasuredHeight();
+                    activity1.listView.setLayoutParams(params);
+                    break;
             }
 
         }
@@ -254,4 +355,63 @@ public class Home_Fragment extends Fragment implements ViewPager.OnPageChangeLis
             }
         }
     }
+
+    public List<HomeShopList> prepaerDate(ArrayList<String> list){
+        List<HomeShopList> shopLists = new ArrayList<>();
+        File dir = new File(getActivity().getFilesDir().getAbsolutePath()+"/img");
+        if(!dir.exists()){
+            dir.mkdir();
+        }
+        for(int i =0;i < list.size();i++){
+            Log.i("ceshi",i+getActivity().getFilesDir().getAbsolutePath()+list.get(i+1));
+            HomeShopList shopList = new HomeShopList();
+            shopList.setShopname(list.get(i));
+            shopList.setShopimg(list.get(i+1));
+            shopLists.add(shopList);
+            i=i+1;
+        }
+        return shopLists;
+    }
+
+    //请求图片list子线程
+    class MyThread extends Thread {
+        @Override
+        public void run(){
+            String str = "首页list请求";
+            MediaType type = MediaType.parse("text/plain;charset=UTF-8");
+            RequestBody body = RequestBody.create(type,str);
+            Request.Builder builder = new Request.Builder();
+            builder.url("http://10.7.85.138:8080/demo001/ShopDemo/homelist.action");
+            //builder.url("http://172.16.12.228:8080/demo001/ShopDemo/homelist.action");
+            builder.post(body);
+            Request request = builder.build();
+            Call call = ok.newCall(request);
+
+            try {
+                Response response = call.execute();
+
+                String jshoplist = response.body().string();
+                Gson gson = new Gson();
+                List<ShopDemo> shoplist = gson.fromJson(jshoplist,new TypeToken<List<ShopDemo>>(){}.getType());
+                Message msg = Message.obtain();
+                Bundle b = new Bundle();
+                for(int i = 0;i<shoplist.size();i++){
+                    String n = String.valueOf(i);
+
+                    b.putString(n,gson.toJson(shoplist.get(i)));
+
+                }
+                msg.setData(b);
+                msg.what = 1;
+                mHandler.sendMessage(msg);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mHandler.removeCallbacks(thread);
+        }
+    }
+
+
+
+
 }

@@ -6,18 +6,34 @@ import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 
+import com.example.lenovo.viewpagerdemo.CommentList;
+import com.example.lenovo.viewpagerdemo.adapters.CustomComAdapter;
 import com.example.lenovo.viewpagerdemo.adapters.MyPagerAdapter;
 import com.example.lenovo.viewpagerdemo.R;
+import com.example.lenovo.viewpagerdemo.entity.ShopDemo;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class HomeActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, View.OnTouchListener{
     public static final int VIEW_PAGER_DELAY = 2000;
@@ -36,6 +52,31 @@ public class HomeActivity extends AppCompatActivity implements ViewPager.OnPageC
     //-----以上为轮播图所用------------
     private ImageButton imgbtn_food;
     private ImageButton imgbtn_entertain;
+
+    //主线程新建handler获得子线程服务器请求数据更新UI
+    private ListView listView;
+    private OkHttpClient okHttpClient;
+    private Thread thread;
+    private ArrayList<String> s = new ArrayList<>();
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg){
+            switch (msg.what){
+                case 1:
+                    Log.i("demo","success");
+                    Bundle b = msg.getData();
+                    Set<String> keySet = b.keySet();
+                    for(String key:keySet){
+                        s.add((String)b.get(key));
+                    }
+                    break;
+            }
+            listView = findViewById(R.id.lv_shops);
+            CustomComAdapter customComAdapter = new CustomComAdapter(getApplicationContext(),R.layout.activity_home,prepaerDate(s));
+            listView.setAdapter(customComAdapter);
+            super.handleMessage(msg);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +106,7 @@ public class HomeActivity extends AppCompatActivity implements ViewPager.OnPageC
         //设置底部4个小点
         setBottomIndicator();
 
-
+        getshoplist();
     }
     private void addImageView(){
         ImageView view0 = new ImageView(this);
@@ -236,4 +277,91 @@ public class HomeActivity extends AppCompatActivity implements ViewPager.OnPageC
             }
         }
     }
+    public void getshoplist(){
+        thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String str = "首页list请求";
+                MediaType type = MediaType.parse("text/plain;charset=UTF-8");
+                RequestBody body = RequestBody.create(type,str);
+                Request.Builder builder = new Request.Builder();
+
+                builder.url("http://172.16.23.47:8080/demo001/ShopDemo/homelist.action");
+                builder.post(body);
+                Request request = builder.build();
+                Call call = okHttpClient.newCall(request);
+
+                try {
+                    Response response = call.execute();
+                    Log.i("demo",response.body().string());
+                    String jshoplist = response.body().string();
+                    Gson gson = new Gson();
+                    List<ShopDemo> shoplist = gson.fromJson(jshoplist,new TypeToken<List<ShopDemo>>(){}.getType());
+                    Message msg = Message.obtain();
+                    Bundle b = new Bundle();
+                    for(int i = 0;i<shoplist.size();i++){
+                        String n = String.valueOf(i);
+                        b.putString(n,shoplist.get(i).getShopdName());
+
+                    }
+                    msg.setData(b);
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                handler.removeCallbacks(thread);
+            }
+        });
+
+        thread.start();
+    }
+    //请求图片list子线程
+    class MyThread extends Thread {
+        @Override
+        public void run(){
+            String str = "首页list请求";
+            MediaType type = MediaType.parse("text/plain;charset=UTF-8");
+            RequestBody body = RequestBody.create(type,str);
+            Request.Builder builder = new Request.Builder();
+
+            builder.url("http://172.16.23.47:8080/demo001/ShopDemo/homelist.action");
+            builder.post(body);
+            Request request = builder.build();
+            Call call = okHttpClient.newCall(request);
+
+            try {
+                Response response = call.execute();
+                Log.i("demo",response.body().string());
+                String jshoplist = response.body().string();
+                Gson gson = new Gson();
+                List<ShopDemo> shoplist = gson.fromJson(jshoplist,new TypeToken<List<ShopDemo>>(){}.getType());
+                Message msg = Message.obtain();
+                Bundle b = new Bundle();
+                for(int i = 0;i<shoplist.size();i++){
+                    String n = String.valueOf(i);
+                    b.putString(n,shoplist.get(i).getShopdName());
+
+                }
+                msg.setData(b);
+                msg.what = 1;
+                handler.sendMessage(msg);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            handler.removeCallbacks(thread);
+        }
+    }
+
+    public List<CommentList> prepaerDate(ArrayList<String> list){
+        List<CommentList> comList = new ArrayList<>();
+        for(int i =0;i < list.size();i++){
+            CommentList commentList = new CommentList();
+            commentList.setItem_title(list.get(i));
+            commentList.setImg_id(R.mipmap.ic_launcher);
+            comList.add(commentList);
+        }
+        return comList;
+    }
+
 }
